@@ -1,4 +1,4 @@
-# 2020_Wombat_GI_tract_R
+# 2021_Wombat_GI_tract_16S
 
 A [workflowr][] project.
 

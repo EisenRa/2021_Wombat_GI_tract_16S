@@ -7,7 +7,7 @@ Pre-print link:
 - QIIME2 code + analysis details are available in the Jupyter notebook: **code/2020_BNW_SHNW_GIT_16S.ipynb**
 - QIIME2 outputs are available in the **data/QIIME2_Outputs** folder
 - R code used for analyses and figures is available in **code** folder
-- The raw DNA sequencing data is available on the NCBI SRA: BioProject ID PRJNAXXXXXXXX
+- The raw DNA sequencing data is available on the NCBI SRA: BioProject ID PRJNA727080
 
 **A Zenodo link will be made to freeze the final version of this repository upon acceptance**
 

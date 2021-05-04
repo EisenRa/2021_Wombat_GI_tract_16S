@@ -1,0 +1,271 @@
+---
+title: "Wombat-GIT-ANCOM-R"
+author: "Erin D'Agnese"
+date: "1/31/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Set working directory
+```{r}
+setwd("C:/Users/erdag/OneDrive/Documents/Wombat")
+```
+
+Load necessary libraries
+```{r}
+library(exactRankTests)
+library(nlme)
+library(dplyr)
+library(ggplot2)
+library(compositions)
+library(readr)
+library(tidyverse)
+```
+Make sure the script for the ANCOM analysis ANCOM.R.2 by Frederick Huang is in your working directory or link it with code from his GitHub repository then load the script into your workspace.
+```{r}
+source("ancom_v2.1.R")
+```
+
+Following the Read.me file from the ANCOM.R.2 documentation use the appropriate OTU/ASV table and the corresponding Metadata file
+```{r}
+otu_data = read_csv("ps.colon.rarefied.genus.otu.csv")
+otu_id = otu_data$`ASV.id`
+otu_data = data.frame(otu_data[, -1], check.names = FALSE)
+rownames(otu_data) = otu_id
+
+meta_data = read_csv("Wombat-GIT-Metadata.csv")
+meta_data = meta_data %>% rename(Sample.ID = 'sampleid')
+
+```
+
+create the feature table for ANCOM
+
+```{r}
+feature_table = otu_data; sample_var = "Sample.ID"; group_var = NULL 
+```
+
+#due to the number of samples per individual the use of a group to determine differentially abund taxa based on structural zeros led to identification of non significantly representative OTUs
+
+```{r}
+out_cut = 0.05; zero_cut = 0.97; lib_cut = 5000; neg_lb = TRUE
+prepro = feature_table_pre_process(feature_table, meta_data, sample_var, group_var, 
+                                   out_cut, zero_cut, lib_cut, neg_lb)
+feature_table = prepro$feature_table # Preprocessed feature table
+meta_data = prepro$meta_data # Preprocessed metadata
+struc_zero = prepro$structure_zeros # Structural zero info
+```
+
+run the ancom with the main variable as Sampletype while accounting for variability at the species level
+
+```{r}
+main_var = "sampletype"; p_adj_method = "BH"; alpha = 0.05
+adj_formula = "species"; rand_formula = NULL
+t_start = Sys.time()
+res = ANCOM(feature_table, meta_data, struc_zero, main_var, p_adj_method, 
+            alpha, adj_formula, rand_formula)
+t_end = Sys.time()
+t_run = t_end - t_start
+
+write_csv(res$out, "ps.colon.rarefied.sampletype.by.species.csv")
+
+```
+
+visualise the volcano plot of the output
+
+```{r}
+n_taxa = ifelse(is.null(struc_zero), nrow(feature_table), sum(apply(struc_zero, 1, sum) == 0))
+# Cutoff values for declaring differentially abundant taxa
+cut_off = c(0.9 * (n_taxa -1), 0.8 * (n_taxa -1), 0.7 * (n_taxa -1), 0.6 * (n_taxa -1))
+names(cut_off) = c("detected_0.9", "detected_0.8", "detected_0.7", "detected_0.6")
+
+# Annotation data
+dat_ann = data.frame(x = min(res$fig$data$x), y = cut_off["detected_0.6"], label = "W[0.6]")
+
+fig = res$fig +
+  geom_hline(yintercept = cut_off["detected_0.6"], linetype = "dashed") +
+  geom_text(data = dat_ann, aes(x = x, y = y, label = label),
+            size = 4, vjust = -0.5, hjust = 0, color = "orange", parse = TRUE)
+fig
+```
+
+run the ANCOM for species level differences and visualise
+
+```{r}
+main_var = "species"; p_adj_method = "BH"; alpha = 0.05
+adj_formula = NULL; rand_formula = NULL
+t_start = Sys.time()
+res = ANCOM(feature_table, meta_data, struc_zero, main_var, p_adj_method, 
+            alpha, adj_formula, rand_formula)
+t_end = Sys.time()
+t_run = t_end - t_start
+
+write_csv(res$out, "ps.colon.rarefied.species.ancom.csv")
+
+n_taxa = ifelse(is.null(struc_zero), nrow(feature_table), sum(apply(struc_zero, 1, sum) == 0))
+# Cutoff values for declaring differentially abundant taxa
+cut_off = c(0.9 * (n_taxa -1), 0.8 * (n_taxa -1), 0.7 * (n_taxa -1), 0.6 * (n_taxa -1))
+names(cut_off) = c("detected_0.9", "detected_0.8", "detected_0.7", "detected_0.6")
+
+# Annotation data
+dat_ann = data.frame(x = min(res$fig$data$x), y = cut_off["detected_0.6"], label = "W[0.6]")
+
+fig = res$fig +
+  geom_hline(yintercept = cut_off["detected_0.6"], linetype = "dashed") +
+  geom_text(data = dat_ann, aes(x = x, y = y, label = label),
+            size = 4, vjust = -0.5, hjust = 0, color = "orange", parse = TRUE)
+fig
+```
+
+Run the ANCOM for sampleposition and visualise
+
+```{r}
+main_var = "sample_position"; p_adj_method = "BH"; alpha = 0.05
+adj_formula = "species"; rand_formula = NULL
+t_start = Sys.time()
+res = ANCOM(feature_table, meta_data, struc_zero, main_var, p_adj_method, 
+            alpha, adj_formula, rand_formula)
+t_end = Sys.time()
+t_run = t_end - t_start
+
+write_csv(res$out, "ps.colon.rarefied.sampleposition.ancom.csv")
+
+n_taxa = ifelse(is.null(struc_zero), nrow(feature_table), sum(apply(struc_zero, 1, sum) == 0))
+# Cutoff values for declaring differentially abundant taxa
+cut_off = c(0.9 * (n_taxa -1), 0.8 * (n_taxa -1), 0.7 * (n_taxa -1), 0.6 * (n_taxa -1))
+names(cut_off) = c("detected_0.9", "detected_0.8", "detected_0.7", "detected_0.6")
+
+# Annotation data
+dat_ann = data.frame(x = min(res$fig$data$x), y = cut_off["detected_0.6"], label = "W[0.6]")
+
+fig = res$fig +
+  geom_hline(yintercept = cut_off["detected_0.6"], linetype = "dashed") +
+  geom_text(data = dat_ann, aes(x = x, y = y, label = label),
+            size = 4, vjust = -0.5, hjust = 0, color = "orange", parse = TRUE)
+fig
+
+```
+
+Mapping the ANCOM results onto the classification of the representative ASVs
+
+```{r}
+df1<-read.csv("C:/Users/erdag/OneDrive/Documents/Wombat/ps.colon.rarefied.species.ancom.csv",head=T)
+df2<-read.csv("C:/Users/erdag/OneDrive/Documents/Wombat/ps.colon.rarefied.genus.mapping.csv",head=T)
+species_asv_ancom<-merge(df1,df2,by=c('taxa_id'),all.x=TRUE, all.y=TRUE)
+write.csv(species_asv_ancom, "C:/Users/erdag/OneDrive/Documents/Wombat/colon_rarefied_species_ancom_mapped.csv", row.names = FALSE)
+
+df3<-read.csv("C:/Users/erdag/OneDrive/Documents/Wombat/ps.colon.rarefied.sampletype.by.species.csv",head=T)
+sampletype_asv_ancom<-merge(df3,df2,by=c('taxa_id'),all.x=TRUE, all.y=TRUE)
+write.csv(sampletype_asv_ancom, "C:/Users/erdag/OneDrive/Documents/Wombat/colon_rarefied_sampletype_ancom_mapped.csv", row.names = FALSE)
+
+df4<-read.csv("C:/Users/erdag/OneDrive/Documents/Wombat/ps.colon.rarefied.sampleposition.ancom.csv",head=T)
+sampleposition_asv_ancom<-merge(df4,df2,by=c('taxa_id'),all.x=TRUE, all.y=TRUE)
+write.csv(sampleposition_asv_ancom, "C:/Users/erdag/OneDrive/Documents/Wombat/colon_rarefied_sampleposition_ancom_mapped.csv", row.names = FALSE)
+
+```
+
+Need to make sums of the reads for each rarefied ASV by variable
+so need to load another package
+
+```{r}
+library(doBy)
+```
+
+Need to subset the Metadata file to only represent the colon samples
+
+```{r}
+met<-read.csv('Wombat-GIT-Metadata.csv')
+meta_data = met %>% rename(Sample.ID = 'sampleid')
+meta_data_HG <- subset(meta_data, meta_data$colon=='yes', select = c("Sample.ID", "species", "sampletype", "colon", "sample_position"))
+
+```
+Get metadata for the subset
+
+```{r}
+m1a<-read.csv('Wombat-GIT-Metadata.csv',nrows=1)
+m1<-meta_data_HG
+colnames(m1)<-colnames(m1a)
+```
+
+get the OTU data for the subset which was previously created and used in the ANCOM
+
+```{r}
+d1 <- read.csv('ps.colon.rarefied.genus.otu.csv')
+d2<-d1[,-1]
+OTUs<-as.character(d1[,1])
+rownames(d2)<-OTUs
+```
+
+Sum reads by species
+
+```{r}
+for (j in OTUs){
+  d3<-d2[j,]
+  d4<-data.frame(t(d3) )
+  colnames(d4)<-'OTU'
+  d4$meta<-factor(m1$species)
+  q3<-summaryBy(OTU ~ meta,
+                data=d4,
+                FUN=sum)
+  if(j==OTUs[1]){q5<-q3}else{q5<-cbind(q5,q3$OTU.sum)}
+}
+ colnames(q5)[-1] <- as.character(OTUs)
+ write.csv(q5,file='ps.colon.species.sums.csv')
+```
+
+Sum reads by sampletype
+
+```{r}
+for (j in OTUs){
+  d3<-d2[j,]
+  d4<-data.frame(t(d3) )
+  colnames(d4)<-'OTU'
+  d4$meta<-factor(m1$colon)
+  q3<-summaryBy(OTU ~ meta,
+                data=d4,
+                FUN=sum)
+  if(j==OTUs[1]){q5<-q3}else{q5<-cbind(q5,q3$OTU.sum)}
+}
+colnames(q5)[-1] <- as.character(OTUs)
+write.csv(q5,file='ps.colon.rarefied.sampletype.sums.csv')
+```
+Sum reads by sampleposition
+```{r}
+for (j in OTUs){
+  d3<-d2[j,]
+  d4<-data.frame(t(d3) )
+  colnames(d4)<-'OTU'
+  d4$meta<-factor(m1$sample_position)
+  q3<-summaryBy(OTU ~ meta,
+                data=d4,
+                FUN=sum)
+  if(j==OTUs[1]){q5<-q3}else{q5<-cbind(q5,q3$OTU.sum)}
+}
+colnames(q5)[-1] <- as.character(OTUs)
+write.csv(q5,file='ps.colon.rarefied.sampleposition.sums.csv')
+```
+Need to transpose the results and change heading for the ASV column to 'taxa_id' 
+before mapping the ANCOM results with the classification mapped file to the sums files
+
+mapping the sums onto the ANCOM results
+
+```{r}
+df5<-read.csv("C:/Users/erdag/OneDrive/Documents/Wombat/colon_rarefied_species_ancom_mapped.csv",head=T)
+df6<-read.csv("C:/Users/erdag/OneDrive/Documents/Wombat/ps.colon.species.sums.csv",head=T)
+HGspecies_ancom_sum<-merge(df5,df6,by=c('taxa_id'),all.x=TRUE, all.y=TRUE)
+write.csv(HGspecies_ancom_sum, "C:/Users/erdag/OneDrive/Documents/Wombat/colon_rarefied_species_ANCOM_sums.csv", row.names = FALSE)
+
+df7<-read.csv("C:/Users/erdag/OneDrive/Documents/Wombat/colon_rarefied_sampletype_ancom_mapped.csv",head=T)
+df8<-read.csv("C:/Users/erdag/OneDrive/Documents/Wombat/ps.colon.rarefied.sampletype.sums.csv",head=T)
+HGsampletype_ancom_sum<-merge(df7,df8,by=c('taxa_id'),all.x=TRUE, all.y=TRUE)
+write.csv(HGsampletype_ancom_sum, "C:/Users/erdag/OneDrive/Documents/Wombat/colon_rarefied_sampletype_ANCOM_sums.csv", row.names = FALSE)
+
+df9<-read.csv("C:/Users/erdag/OneDrive/Documents/Wombat/colon_rarefied_sampleposition_ancom_mapped.csv",head=T)
+df10<-read.csv("C:/Users/erdag/OneDrive/Documents/Wombat/ps.colon.rarefied.sampleposition.sums.csv",head=T)
+HGsampleposition_ancom_sum<-merge(df9,df10,by=c('taxa_id'),all.x=TRUE, all.y=TRUE)
+write.csv(HGsampleposition_ancom_sum, "C:/Users/erdag/OneDrive/Documents/Wombat/colon_rarefied_sampleposition_ANCOM_sums.csv", row.names = FALSE)
+
+```
+

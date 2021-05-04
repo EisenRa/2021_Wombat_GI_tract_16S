@@ -1,3 +1,3 @@
 # Code
 
-Save command-line scripts and shared R code here.
+Contains the R and QIIME2 code for the study.

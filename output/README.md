@@ -1,3 +1,3 @@
 # Output
 
-Save processed data files here.
+This folder contains output figures/tables.

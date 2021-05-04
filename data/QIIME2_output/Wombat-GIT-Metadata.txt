@@ -1,0 +1,32 @@
+sampleid	replicate	sampleshort	sampleshort2	samplepoint	samplecollection	samplelength	order	species	sampletype	sampletypeplot
+BNW-DC-A	A	DC	BNW-DC	7	7	13	m	Bare-nosed	Distal colon	4) Distal colon
+BNW-DC-B	B	DC	BNW-DC	7	7	14	n	Bare-nosed	Distal colon	4) Distal colon
+BNW-PC1-A	A	PC1	BNW-PC1	3	3	5	e	Bare-nosed	Proximal colon	3) Proximal colon
+BNW-PC1-B	B	PC1	BNW-PC1	3	3	6	f	Bare-nosed	Proximal colon	3) Proximal colon
+BNW-PC2-A	A	PC2	BNW-PC2	4	4	7	g	Bare-nosed	Proximal colon	3) Proximal colon
+BNW-PC2-B	B	PC2	BNW-PC2	4	4	8	h	Bare-nosed	Proximal colon	3) Proximal colon
+BNW-PC3-A	A	PC3	BNW-PC3	5	5	9	i	Bare-nosed	Proximal colon	3) Proximal colon
+BNW-PC3-B	B	PC3	BNW-PC3	5	5	10	j	Bare-nosed	Proximal colon	3) Proximal colon
+BNW-PC4-A	A	PC4	BNW-PC4	6	6	11	k	Bare-nosed	Proximal colon	3) Proximal colon
+BNW-PC4-B	B	PC4	BNW-PC4	6	6	12	l	Bare-nosed	Proximal colon	3) Proximal colon
+BNW-SI-A	A	SI	BNW-SI	2	2	3	c	Bare-nosed	Small intestine	2) Small intestine
+BNW-SI-B	B	SI	BNW-SI	2	2	4	d	Bare-nosed	Small intestine	2) Small intestine
+BNW-ST-A	A	ST	BNW-ST	1	1	1	a	Bare-nosed	Stomach	1) Stomach
+BNW-ST-B	B	ST	BNW-ST	1	1	2	b	Bare-nosed	Stomach	1) Stomach
+EBC-W		EBC	EBC			31	5	NA	negative control	5) negative control
+SHNW-DC1-A	A	DC1	SHNW-DC1	7	14	27	1	Hairy-nosed	Distal colon	4) Distal colon
+SHNW-DC1-B	B	DC1	SHNW-DC1	7	14	28	2	Hairy-nosed	Distal colon	4) Distal colon
+SHNW-DC3-A	A	DC3	SHNW-DC3	8	15	29	3	Hairy-nosed	Distal colon	4) Distal colon
+SHNW-DC3-B	B	DC3	SHNW-DC3	8	15	30	4	Hairy-nosed	Distal colon	4) Distal colon
+SHNW-DSI-A	A	DSI	SHNW-DSI	3	10	19	s	Hairy-nosed	Small intestine	2) Small intestine
+SHNW-DSI-B	B	DSI	SHNW-DSI	3	10	20	t	Hairy-nosed	Small intestine	2) Small intestine
+SHNW-PC1-A	A	PC1	SHNW-PC1	4	11	21	u	Hairy-nosed	Proximal colon	3) Proximal colon
+SHNW-PC1-B	B	PC1	SHNW-PC1	4	11	22	v	Hairy-nosed	Proximal colon	3) Proximal colon
+SHNW-PC2-A	A	PC2	SHNW-PC2	5	12	23	w	Hairy-nosed	Proximal colon	3) Proximal colon
+SHNW-PC2-B	B	PC2	SHNW-PC2	5	12	24	x	Hairy-nosed	Proximal colon	3) Proximal colon
+SHNW-PC3-A	A	PC3	SHNW-PC3	6	13	25	y	Hairy-nosed	Proximal colon	3) Proximal colon
+SHNW-PC3-B	B	PC3	SHNW-PC3	6	13	26	z	Hairy-nosed	Proximal colon	3) Proximal colon
+SHNW-PSI-A	A	PSI	SHNW-PSI	2	9	17	q	Hairy-nosed	Small intestine	2) Small intestine
+SHNW-PSI-B	B	PSI	SHNW-PSI	2	9	18	r	Hairy-nosed	Small intestine	2) Small intestine
+SHNW-ST-A	A	ST	SHNW-ST	1	8	15	o	Hairy-nosed	Stomach	1) Stomach
+SHNW-ST-B	B	ST	SHNW-ST	1	8	16	p	Hairy-nosed	Stomach	1) Stomach

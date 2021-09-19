@@ -1,6 +1,6 @@
 # 2021_Wombat_GI_tract_16S
 
-### Repository for the 2021 paper: "Signatures of landscape and captivity in the gut microbiota of Southern Hairy-nosed Wombats (Lasiorhinus latifrons)" in Animal Microbiome
+### Repository for the 2021 paper:
 
 Pre-print link: 
 

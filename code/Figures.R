@@ -58,7 +58,7 @@ nsamples(psUF)
 1/30
 #1/30 = 0.0333
 
-#Plot prevalance/abundance of each ASV, grouped by phylum, with the proposed prevalence 
+#Plot prevalance/abundance of each ASV, grouped by phylum, with the proposed prevalence
 # filter threshold line
 prevdf1 <- subset(prevdf, Phylum %in% get_taxa_unique(psUF,"Phylum"))
 
@@ -67,11 +67,11 @@ ggplot(prevdf1, aes(TotalAbundance, Prevalence / nsamples(psUF), color = Phylum)
   scale_x_log10() +  xlab("Total Abundance") + ylab("Prevalence [Frac. Samples]") +
   facet_wrap(~Phylum) + theme(legend.position="none")
 
-ggsave("output/AbundancePrevalence_Per_Phylum.png", 
+ggsave("output/AbundancePrevalence_Per_Phylum.png",
        width = 19, height = 10, dpi = 300)
 
 #Execute prevalence filter
-keepTaxa <- rownames(prevdf1)[(prevdf1$Prevalence >= 2)] 
+keepTaxa <- rownames(prevdf1)[(prevdf1$Prevalence >= 2)]
 psUF.prevF <- prune_taxa(keepTaxa, psUF)
 
 
@@ -108,32 +108,32 @@ colours <- c("red", "orange", "yellow", "forestgreen")
 
 #Reorder to match GI tract order
 BNW.alpha.div.df.ordered <- BNW.alpha.div.df
-BNW.alpha.div.df.ordered$sampleshort <- factor(BNW.alpha.div.df.ordered$sampleshort,      
-                                               levels = c('ST', 'SI', 'PC1', 'PC2', 
+BNW.alpha.div.df.ordered$sampleshort <- factor(BNW.alpha.div.df.ordered$sampleshort,
+                                               levels = c('ST', 'SI', 'PC1', 'PC2',
                                                           'PC3', 'PC4', 'DC'))
 
 SHNW.alpha.div.df.ordered <- SHNW.alpha.div.df
-SHNW.alpha.div.df.ordered$sampleshort <- factor(SHNW.alpha.div.df.ordered$sampleshort,      
-                                                levels = c('ST', 'PSI', 'DSI', 'PC1', 
+SHNW.alpha.div.df.ordered$sampleshort <- factor(SHNW.alpha.div.df.ordered$sampleshort,
+                                                levels = c('ST', 'PSI', 'DSI', 'PC1',
                                                            'PC2', 'PC3', 'DC1', 'DC3'))
 
-BNW.richness <- ggplot(BNW.alpha.div.df.ordered, 
+BNW.richness <- ggplot(BNW.alpha.div.df.ordered,
                        aes(x=sampleshort, y=observed, fill=sampletype))
-SHNW.richness <- ggplot(SHNW.alpha.div.df.ordered, 
+SHNW.richness <- ggplot(SHNW.alpha.div.df.ordered,
                         aes(x=sampleshort, y=observed, fill=sampletype))
 
 #Bare-nosed plot
-gg.BNW.richness = BNW.richness + 
+gg.BNW.richness = BNW.richness +
   #Boxplot
   facet_wrap(~sampleshort, scales = "free_x", ncol = 7) +
-  geom_boxplot() +
+  geom_line() +
   #Jitter, size, colour
-  geom_jitter(position=position_dodge2(0.3), size=3.5, aes(colour=sampletype)) +
+  geom_jitter(position=position_dodge2(0.1), size=8, aes(colour=sampletype)) +
   #Custom manual colours
   scale_colour_manual(values=colours) +
   scale_fill_manual(values=colours) +
   #Tick labels
-  theme(axis.text.x = element_blank(), 
+  theme(axis.text.x = element_blank(),
         axis.text.y = element_text(face="bold", size=20),
         axis.ticks.x = element_blank(),
         axis.title.x = element_text(size=20, face="bold"),
@@ -141,7 +141,7 @@ gg.BNW.richness = BNW.richness +
         axis.line = element_line(colour = "black"),
         #Background panel
         panel.background = element_rect(fill = "White"),
-        panel.grid.major = element_line(colour = "white"), 
+        panel.grid.major = element_line(colour = "white"),
         panel.grid.minor = element_line(colour = "white"),
         strip.background = element_blank(),
         strip.text = element_blank(),
@@ -155,6 +155,7 @@ gg.BNW.richness = BNW.richness +
 #Adjust sizes of facets to match proportions of the drawing
 #Using 'grid' to adjust sizes. To figure out which element to select, use "gtable_show_layout(gt)"
 #Also save as SVG file
+
 svg(filename = "output/Figure1A.svg", width = 20, height = 6)
 
 gtbnw = ggplot_gtable(ggplot_build(gg.BNW.richness))
@@ -171,17 +172,17 @@ dev.off()
 
 
 #add jitterm, size, and colour
-gg.SHNW.richness = SHNW.richness + 
+gg.SHNW.richness = SHNW.richness +
   #Boxplot
   facet_wrap(~sampleshort, scales = "free_x", ncol = 8) +
-  geom_boxplot() +
+  geom_line() +
   #Jitter, size, colour
-  geom_jitter(position=position_dodge2(0.3), size=3.5, aes(colour=sampletype)) +
+  geom_jitter(position=position_dodge2(0.1), size=8, aes(colour=sampletype)) +
   #Custom manual colours
   scale_colour_manual(values=colours) +
   scale_fill_manual(values=colours) +
   #Tick labels
-  theme(axis.text.x = element_blank(), 
+  theme(axis.text.x = element_blank(),
         axis.text.y = element_text(face="bold", size=20),
         axis.ticks.x = element_blank(),
         axis.title.x = element_text(size=20, face="bold"),
@@ -189,7 +190,7 @@ gg.SHNW.richness = SHNW.richness +
         axis.line = element_line(colour = "black"),
         #Background panel
         panel.background = element_rect(fill = "White"),
-        panel.grid.major = element_line(colour = "white"), 
+        panel.grid.major = element_line(colour = "white"),
         panel.grid.minor = element_line(colour = "white"),
         strip.background = element_blank(),
         strip.text = element_blank(),
@@ -230,18 +231,18 @@ ord.unw.uni <- ordinate(psUF.prevF.rar, "PCoA", "unifrac", weighted=F)
 ord.w.uni <- ordinate(psUF.prevF.rar, "PCoA", "unifrac", weighted=T)
 
 #Axes 1/2
-unwt.unifrac.1.2 <- plot_ordination(psUF.prevF.rar, 
-                                    ord.unw.uni, color="sampletype", shape = "species", 
+unwt.unifrac.1.2 <- plot_ordination(psUF.prevF.rar,
+                                    ord.unw.uni, color="sampletype", shape = "species",
                                     axes = c(1, 2))
-w.unifrac.1.2 <- plot_ordination(psUF.prevF.rar, 
-                                 ord.w.uni, color="sampletype", shape = "species", 
+w.unifrac.1.2 <- plot_ordination(psUF.prevF.rar,
+                                 ord.w.uni, color="sampletype", shape = "species",
                                  axes = c(1, 2))
 #Axes 1/3
-unwt.unifrac.1.3 <- plot_ordination(psUF.prevF.rar, 
-                                    ord.unw.uni, color="sampletype", shape = "species", 
-                                    axes = c(1, 3)) 
-w.unifrac.1.3 <- plot_ordination(psUF.prevF.rar, 
-                                 ord.w.uni, color="sampletype", shape = "species", 
+unwt.unifrac.1.3 <- plot_ordination(psUF.prevF.rar,
+                                    ord.unw.uni, color="sampletype", shape = "species",
+                                    axes = c(1, 3))
+w.unifrac.1.3 <- plot_ordination(psUF.prevF.rar,
+                                 ord.w.uni, color="sampletype", shape = "species",
                                  axes = c(1, 3))
 
 #Plot it
@@ -251,7 +252,7 @@ Fig2a <- unwt.unifrac.1.2 +
   geom_path(size = 1) +
   geom_text_repel(aes(label=samplepoint), color="black", fontface="bold", size=5) +
   scale_colour_manual(values=colours) +
-  theme(axis.text.x = element_text(face="bold", size=14), 
+  theme(axis.text.x = element_text(face="bold", size=14),
         axis.text.y = element_text(face="bold", size=14),
         axis.title.x = element_text(size=14, face="bold"),
         axis.title.y = element_text(size=14, face="bold"),
@@ -259,7 +260,7 @@ Fig2a <- unwt.unifrac.1.2 +
         legend.key = element_blank(),
         #Background panel
         panel.background = element_rect(fill = "White"),
-        panel.grid.major = element_line(colour = "white"), 
+        panel.grid.major = element_line(colour = "white"),
         panel.grid.minor = element_line(colour = "white"))
 
 Fig2b <- w.unifrac.1.2 +
@@ -267,25 +268,25 @@ Fig2b <- w.unifrac.1.2 +
   geom_point(size=9) +
   geom_path(size = 1) +
   geom_text_repel(aes(label=samplepoint), color="black", fontface="bold", size=5) +
-  geom_rect(mapping = aes(xmin=-0.06, xmax=-0.14, ymin=-0.13, ymax=-0.20), 
+  geom_rect(mapping = aes(xmin=-0.06, xmax=-0.14, ymin=-0.13, ymax=-0.20),
             color = "black", alpha = 0, size = 2) +
-  geom_text(aes(label="First proximal\n colon samples", x=-0, y=-0.163), 
+  geom_text(aes(label="First proximal\n colon samples", x=-0, y=-0.163),
             size = 5, color = "black") +
   scale_colour_manual(values=colours) +
-  theme(axis.text.x = element_text(face="bold", size=14), 
+  theme(axis.text.x = element_text(face="bold", size=14),
         axis.text.y = element_text(face="bold", size=14),
         axis.title.x = element_text(size=14, face="bold"),
         axis.title.y = element_text(size=14, face="bold"),
         axis.line = element_line(colour = "black"),
-        legend.key = element_blank(), 
+        legend.key = element_blank(),
         #Background panel
         panel.background = element_rect(fill = "White"),
-        panel.grid.major = element_line(colour = "white"), 
+        panel.grid.major = element_line(colour = "white"),
         panel.grid.minor = element_line(colour = "white"))
 
 #Create figure 2:
 
-ggarrange(Fig2a, Fig2b, nrow = 2, common.legend = TRUE, legend="bottom", 
+ggarrange(Fig2a, Fig2b, nrow = 2, common.legend = TRUE, legend="bottom",
           labels = c("A)", "B)"), font.label = list(size=20, face="bold", color="black"))
 
 ggsave(filename = "output/Figure2.png", width = 10, height = 10, dpi = 300)
@@ -295,7 +296,7 @@ ggsave(filename = "output/Figure2.pdf", width = 10, height = 10, dpi = 300)
 
 ## Supplementary figure 1
 ## Remove the stomach/SI samples to get a better look at what's going on in the colon!
-ps.colon <- subset_samples(psUF.prevF, sampletype != "Stomach" & 
+ps.colon <- subset_samples(psUF.prevF, sampletype != "Stomach" &
                              sampletype != "Small intestine")
 
 #Rarefy n number of reads where n = read count of samples with fewest reads
@@ -309,18 +310,18 @@ ord.unw.uni.colon <- ordinate(ps.colon.rar, "PCoA", "unifrac", weighted=F)
 ord.w.uni.colon <- ordinate(ps.colon.rar, "PCoA", "unifrac", weighted=T)
 
 #Axes 1/2
-unwt.unifrac.1.2.colon <- plot_ordination(ps.colon.rar, ord.unw.uni.colon, 
-                                          color="sampletype", shape = "species", 
+unwt.unifrac.1.2.colon <- plot_ordination(ps.colon.rar, ord.unw.uni.colon,
+                                          color="sampletype", shape = "species",
                                           axes = c(1, 2))
-w.unifrac.1.2.colon <- plot_ordination(ps.colon.rar, ord.w.uni.colon, 
-                                       color="sampletype", shape = "species", 
+w.unifrac.1.2.colon <- plot_ordination(ps.colon.rar, ord.w.uni.colon,
+                                       color="sampletype", shape = "species",
                                        axes = c(1, 2))
 #Axes 1/3
-unwt.unifrac.1.3.colon <- plot_ordination(ps.colon.rar, ord.unw.uni.colon, 
-                                          color="sampletype", shape = "species", 
-                                          axes = c(1, 3)) 
-w.unifrac.1.3.colon <- plot_ordination(ps.colon.rar, ord.w.uni.colon, 
-                                       color="sampletype", shape = "species", 
+unwt.unifrac.1.3.colon <- plot_ordination(ps.colon.rar, ord.unw.uni.colon,
+                                          color="sampletype", shape = "species",
+                                          axes = c(1, 3))
+w.unifrac.1.3.colon <- plot_ordination(ps.colon.rar, ord.w.uni.colon,
+                                       color="sampletype", shape = "species",
                                        axes = c(1, 3))
 
 #Plot it
@@ -331,14 +332,14 @@ SI_figure_1A <- unwt.unifrac.1.2.colon +
   geom_text(aes(label=samplepoint), color="black", hjust=2.5, vjust=-1) +
   geom_path(size = 1) +
   scale_colour_manual(values=colours) +
-  theme(axis.text.x = element_text(face="bold", size=14), 
+  theme(axis.text.x = element_text(face="bold", size=14),
         axis.text.y = element_text(face="bold", size=14),
         axis.title.x = element_text(size=14, face="bold"),
         axis.title.y = element_text(size=14, face="bold"),
         axis.line = element_line(colour = "black"),
         #Background panel
         panel.background = element_rect(fill = "White"),
-        panel.grid.major = element_line(colour = "white"), 
+        panel.grid.major = element_line(colour = "white"),
         panel.grid.minor = element_line(colour = "white"))
 
 SI_figure_1B <- w.unifrac.1.2.colon +
@@ -348,19 +349,19 @@ SI_figure_1B <- w.unifrac.1.2.colon +
   geom_text(aes(label=samplepoint), color="black", hjust=2.5, vjust=-1) +
   geom_path(size = 1) +
   scale_colour_manual(values=colours) +
-  theme(axis.text.x = element_text(face="bold", size=14), 
+  theme(axis.text.x = element_text(face="bold", size=14),
         axis.text.y = element_text(face="bold", size=14),
         axis.title.x = element_text(size=14, face="bold"),
         axis.title.y = element_text(size=14, face="bold"),
         axis.line = element_line(colour = "black"),
         #Background panel
         panel.background = element_rect(fill = "White"),
-        panel.grid.major = element_line(colour = "white"), 
+        panel.grid.major = element_line(colour = "white"),
         panel.grid.minor = element_line(colour = "white"))
 
 #Create supplmentary figure 1:
 
-ggarrange(SI_figure_1A, SI_figure_1B, nrow = 2, common.legend = TRUE, legend="right", 
+ggarrange(SI_figure_1A, SI_figure_1B, nrow = 2, common.legend = TRUE, legend="right",
           labels = c("A)", "B)"), font.label = list(size=20, face="bold", color="black"))
 
 ggsave(filename = "output/SI_Figure1.png", width = 10, height = 10, dpi = 300)
@@ -372,7 +373,7 @@ ggsave(filename = "output/SI_Figure1.pdf", width = 10, height = 10, dpi = 300)
 ###Taxa bar plots####
 #####################
 
-## I want stacked bar plots for each wombat species, two separate plots using the same  
+## I want stacked bar plots for each wombat species, two separate plots using the same
 ## colours for each taxa
 
 ## Supplementary figure 2
@@ -425,7 +426,7 @@ tax.phylum.bnw <- ggplot(pd.bnw, aes(x = Sample, y = Abundance, fill = Phylum)) 
         strip.text = element_blank(),
         legend.title = element_blank(),
         legend.text = element_text(size = 25, face = 'bold'),
-        legend.position = "bottom", 
+        legend.position = "bottom",
         panel.spacing = unit(2, "lines"),
         panel.background = element_blank(),
         axis.text.x = element_blank()) +
@@ -470,7 +471,7 @@ tax.phylum.shnw <- ggplot(pd.shnw, aes(x = Sample, y = Abundance, fill = Phylum)
       strip.text = element_blank(),
       legend.title = element_blank(),
       legend.text = element_text(size = 25, face = 'bold'),
-      legend.position = "bottom", 
+      legend.position = "bottom",
       panel.spacing = unit(2, "lines"),
       panel.background = element_blank(),
       axis.text.x = element_blank()) +
@@ -523,7 +524,7 @@ psUF.family.merged.relab@otu_table <- phyloseq::t(psUF.family.merged.relab@otu_t
 #Had to transpose otu table, as merge_samples flips it for some reason...
 
 psUF.family.merged.relab.tax <- as.data.frame(tax_table(psUF.family.merged.relab))
-psUF.family.merged.relab.otu.and.tax <- cbind(psUF.family.merged.relab.tax, 
+psUF.family.merged.relab.otu.and.tax <- cbind(psUF.family.merged.relab.tax,
                                               psUF.family.merged.relab@otu_table)
 
 DT::datatable(psUF.family.merged.relab.otu.and.tax)
@@ -534,7 +535,7 @@ write.csv(psUF.family.merged.relab.otu.and.tax, file = "output/Taxonomic_classif
 ## Figure 3
 ## Taxa bar plots at family level. I want to colour only the top 20-most abundant.
 
-#First, figure out what the 20-most abundant families are, then create a column to 
+#First, figure out what the 20-most abundant families are, then create a column to
 # separate them.
 top20families = names(sort(taxa_sums(psUF.family.merged), TRUE)[1:20])
 taxtab20 = cbind(tax_table(psUF.family.merged), family_20 = NA)
@@ -577,8 +578,8 @@ colour_family <- c("Bacteroidaceae" = "#228B22", "Bacteroidales_BS11_gut_group" 
                    "Veillonellaceae" = "##8B0000", "WCHB1-41" = "#000000", "Other" = "#808080")
 
 #Plot the suckers
-pd.family.bnw.plot <- ggplot(pd.family.bnw.sorted, 
-                             aes(x = Sample, y = Abundance, 
+pd.family.bnw.plot <- ggplot(pd.family.bnw.sorted,
+                             aes(x = Sample, y = Abundance,
                                  fill = fct_reorder(family_20, -Abundance))) +
   geom_bar(stat = "identity", size = 0) +
   facet_grid(~samplecollection, scales = "free_x") +
@@ -623,8 +624,8 @@ grid.draw(gtbnw.tax.family)
 dev.off()
 
 
-pd.family.shnw.plot <- ggplot(pd.family.shnw.sorted, 
-                              aes(x = Sample, y = Abundance, 
+pd.family.shnw.plot <- ggplot(pd.family.shnw.sorted,
+                              aes(x = Sample, y = Abundance,
                                   fill = fct_reorder(family_20, -Abundance))) +
   geom_bar(stat = "identity", size = 0) +
   facet_grid(~samplecollection, scales = "free_x") +
@@ -637,7 +638,7 @@ pd.family.shnw.plot <- ggplot(pd.family.shnw.sorted,
         strip.text = element_blank(),
         legend.title = element_blank(),
         legend.text = element_blank(),
-        legend.position = "none", 
+        legend.position = "none",
         panel.spacing = unit(2, "lines"),
         panel.background = element_blank(),
         axis.text.x = element_blank()) +
@@ -725,7 +726,7 @@ all.taxa.non.sig <- all.taxa[!(all.taxa %in% ANCOM.detected.0.7.taxa)]
 length(all.taxa)-length(all.taxa.non.sig)
 
 #Math checks out
-ps.colon.rar.genus.NAs.merged.ANCOM <- prune_taxa(ps.colon.rar.genus.NAs.merged, 
+ps.colon.rar.genus.NAs.merged.ANCOM <- prune_taxa(ps.colon.rar.genus.NAs.merged,
                                                   taxa = ANCOM.detected.0.7.taxa)
 #Format taxonomy to best hit
 ps.colon.rar.genus.NAs.merged.ANCOM.besthit <- microbiomeutilities::format_to_besthit(
@@ -735,11 +736,11 @@ ps.colon.rar.genus.NAs.merged.ANCOM.besthit <- microbiomeutilities::format_to_be
 ps.colon.rar.genus.NAs.merged.ANCOM.besthit@phy_tree = ps.colon.rar.genus.NAs.merged.ANCOM@phy_tree
 
 #Set sample order
-sampleorder <- c("BNW-PC1", "BNW-PC2", "BNW-PC3", "BNW-PC4", "BNW-DC", 
+sampleorder <- c("BNW-PC1", "BNW-PC2", "BNW-PC3", "BNW-PC4", "BNW-DC",
                  "SHNW-PC1", "SHNW-PC2", "SHNW-PC3", "SHNW-DC1", "SHNW-DC3")
 
 plot_heatmap(ps.colon.rar.genus.NAs.merged.ANCOM.besthit, taxa.label = "Genus", method = "RDA",
-             sample.label = "sampleshort", low = "white", high = "red", na.value = "black", 
+             sample.label = "sampleshort", low = "white", high = "red", na.value = "black",
              trans = log_trans(10), sample.order = sampleorder) +
   theme(axis.text.y = element_text(size=10, face = 'italic'),
         axis.title.y = element_blank(),
@@ -749,7 +750,7 @@ plot_heatmap(ps.colon.rar.genus.NAs.merged.ANCOM.besthit, taxa.label = "Genus", 
         axis.title.x = element_blank(),
         axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size = 14, face = "bold"),
         panel.background = element_rect(fill = "White"),
-        panel.grid.major = element_line(colour = "white"), 
+        panel.grid.major = element_line(colour = "white"),
         panel.grid.minor = element_line(colour = "white")) +
   facet_grid(.~species, scale = "free_x", space = "free_x")
 
@@ -769,7 +770,7 @@ ggsave(filename = "output/Figure4.pdf", width = 10, height = 10, dpi = 300)
 ps.colon.rar.BNW <- subset_samples(ps.colon.rar, species == "Bare-nosed")
 ps.colon.rar.SHNW <- subset_samples(ps.colon.rar, species == "Hairy-nosed")
 
-ps.PC.BNW <- subset_samples(ps.colon.rar.BNW, sampleshort == "PC1") 
+ps.PC.BNW <- subset_samples(ps.colon.rar.BNW, sampleshort == "PC1")
 ps.PC.BNW.table <- otu_table(ps.PC.BNW)
 
 ps.DC.BNW <- subset_samples(ps.colon.rar.BNW, sampleshort == "DC")
@@ -787,21 +788,21 @@ ps.colon.all <- merge_phyloseq(ps.PC.BNW, ps.DC.BNW, ps.PC.SHNW, ps.DC.SHNW)
 #Remove ASVs with counts of 0.
 ps.colon.all <- prune_taxa(taxa_sums(ps.colon.all) > 0, ps.colon.all)
 
-##I've set a detection threshold of >2 read counts per sample for this. 
+##I've set a detection threshold of >2 read counts per sample for this.
 ## I.e., an ASV needs at least 3 reads assigned to a sample type to be considered present.
 ## My rationale for this is to remove noise -- if it's only detected with 1 read, is it really there?
 
-#For each ASV (row), if abundance > 2, print ASV (rowname) to a vector 
-venn.pc1.bnw.0 <- rownames(ps.PC.BNW.table[ apply(ps.PC.BNW.table, MARGIN = 1, 
+#For each ASV (row), if abundance > 2, print ASV (rowname) to a vector
+venn.pc1.bnw.0 <- rownames(ps.PC.BNW.table[ apply(ps.PC.BNW.table, MARGIN = 1,
                                                   function(x) any(x > 2))])
 
-venn.dc1.bnw.0 <- rownames(ps.DC.BNW.table[ apply(ps.DC.BNW.table, MARGIN = 1, 
+venn.dc1.bnw.0 <- rownames(ps.DC.BNW.table[ apply(ps.DC.BNW.table, MARGIN = 1,
                                                   function(x) any(x > 2))])
 
-venn.pc1.shnw.0 <- rownames(ps.PC.SHNW.table[ apply(ps.PC.SHNW.table, MARGIN = 1, 
+venn.pc1.shnw.0 <- rownames(ps.PC.SHNW.table[ apply(ps.PC.SHNW.table, MARGIN = 1,
                                                     function(x) any(x > 2))])
 
-venn.dc1.shnw.0 <- rownames(ps.DC.SHNW.table[ apply(ps.DC.SHNW.table, MARGIN = 1, 
+venn.dc1.shnw.0 <- rownames(ps.DC.SHNW.table[ apply(ps.DC.SHNW.table, MARGIN = 1,
                                                     function(x) any(x > 2))])
 
 #Create lists for each species and both species
@@ -809,14 +810,14 @@ bnw <- list(BNW.PC1 = venn.pc1.bnw.0, BNW.DC = venn.dc1.bnw.0)
 
 shnw <- list(SHNW.PC1 = venn.pc1.shnw.0, SHNW.DC = venn.dc1.shnw.0)
 
-bothspecies <- list(BNW.DC = venn.dc1.bnw.0, BNW.PC1 = venn.pc1.bnw.0,  
+bothspecies <- list(BNW.DC = venn.dc1.bnw.0, BNW.PC1 = venn.pc1.bnw.0,
                     SHNW.PC1 = venn.pc1.shnw.0, SHNW.DC = venn.dc1.shnw.0)
 
 #Plot em using venn.diagram (figure 5)
-venn.diagram(bnw, print.mode = c("raw","percent"), fill = c("orange", "red"), inverted = TRUE, 
+venn.diagram(bnw, cex = 1.8, cat.cex = 2.5, print.mode = c("raw","percent"), fill = c("orange", "red"), inverted = TRUE,
              imagetype = "tiff", filename = "output/Figure5A.tiff", cat.pos = c(0,0))
 
-venn.diagram(shnw, print.mode = c("raw","percent"), fill = c("orange", "red"), inverted = TRUE,
+venn.diagram(shnw, cex = 1.8, cat.cex = 2.5, print.mode = c("raw","percent"), fill = c("orange", "red"), inverted = TRUE,
              imagetype = "tiff", filename = "output/Figure5B.tiff", cat.pos = c(0,0))
 
 

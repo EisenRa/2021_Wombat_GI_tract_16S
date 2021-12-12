@@ -22,7 +22,7 @@ These ASVs account for only **0.16%** of the average relative abundance for the 
 ![Figure SI1](https://github.com/EisenRa/2021_Wombat_GI_tract_16S/blob/master/analysis/figures/SI_FigureSS1.png)
 #### A = unweighted unifrac, B = weighted unifrac
 
-### Note, figure 3 would not be influnced by this analysis, as it displayed only the top 20 most abundant families. Likewise for figure 4, as these ultra-low abundance features would be filtered by the ANCOM-II analysis. Hence they are not displayed here.
+Note, figure 3 would not be influnced by this analysis, as it displayed only the top 20 most abundant families. Likewise for figure 4, as these ultra-low abundance features would be filtered by the ANCOM-II analysis. Hence they are not displayed here.
 
 ### Figure 5
 #### Bare-nosed wombat

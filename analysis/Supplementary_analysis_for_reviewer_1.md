@@ -9,3 +9,4 @@
 These ASVs account for only **0.16%** of the average relative abundance for the dataset. 
 
 ### Figure 1 (from original submission -- now figure 2 with new figure addition as recommended by reviewer 2)
+![Figure 1](figure/FigureSS1A.png)

@@ -11,9 +11,9 @@ library(grid)
 library(gtable)
 library(gplots)
 library(ggplot2)
-library(ggrepel)
 library(scales)
 library(ggpubr)
+library(ggrepel)
 library(tidyr)
 library(knitr)
 library(microbiome)
@@ -105,7 +105,7 @@ SHNW.alpha.div.df <- filter(psUF.prevF.alpha.div.df, species == "Hairy-nosed")
 
 ##GGPLOT!
 #Set colours
-colours <- c("red", "orange", "yellow", "forestgreen")
+colours <- c("#ae017e", "#f768a1", "#fbb4b9", "#feebe2")
 
 #Reorder to match GI tract order
 BNW.alpha.div.df.ordered <- BNW.alpha.div.df
@@ -290,9 +290,9 @@ Fig2b <- w.unifrac.1.2 +
 ggarrange(Fig2a, Fig2b, nrow = 2, common.legend = TRUE, legend="bottom",
           labels = c("A)", "B)"), font.label = list(size=20, face="bold", color="black"))
 
-ggsave(filename = "output/Figure2.png", width = 10, height = 10, dpi = 300)
-ggsave(filename = "output/Figure2.svg", width = 10, height = 10, dpi = 300)
-ggsave(filename = "output/Figure2.pdf", width = 10, height = 10, dpi = 300)
+ggsave(filename = "output/Figure4.png", width = 10, height = 10, dpi = 300)
+ggsave(filename = "output/Figure4.svg", width = 10, height = 10, dpi = 300)
+ggsave(filename = "output/Figure4.pdf", width = 10, height = 10, dpi = 300)
 
 
 ## Supplementary figure 1
@@ -533,7 +533,7 @@ DT::datatable(psUF.family.merged.relab.otu.and.tax)
 write.csv(psUF.family.merged.relab.otu.and.tax, file = "output/Taxonomic_classifications_rel_abu.csv")
 
 
-## Figure 3
+## Figure 2
 ## Taxa bar plots at family level. I want to colour only the top 20-most abundant.
 
 #First, figure out what the 20-most abundant families are, then create a column to
@@ -763,7 +763,7 @@ ggsave(filename = "output/Figure4.pdf", width = 10, height = 10, dpi = 300)
 ########Venn#########
 #####################
 
-## Figure 5 and SI figure 3
+## Figure 6 and SI figure 3
 ## Here, we're asking the question: "How many ASVs are shared between PC1 and the last
 ## distal colon sample for each wombat?"
 
@@ -815,11 +815,11 @@ bothspecies <- list(BNW.DC = venn.dc1.bnw.0, BNW.PC1 = venn.pc1.bnw.0,
                     SHNW.PC1 = venn.pc1.shnw.0, SHNW.DC = venn.dc1.shnw.0)
 
 #Plot em using venn.diagram (figure 5)
-venn.diagram(bnw, cex = 1.8, cat.cex = 2.5, print.mode = c("raw","percent"), fill = c("orange", "red"), inverted = TRUE,
-             imagetype = "tiff", filename = "output/Figure5A.tiff", cat.pos = c(0,0))
+venn.diagram(bnw, cex = 1.8, cat.cex = 2.5, print.mode = c("raw","percent"), fill = c("#f768a1", "#ae017e"), inverted = TRUE,
+             imagetype = "tiff", filename = "output/Figure6A.tiff", cat.pos = c(0,0))
 
-venn.diagram(shnw, cex = 1.8, cat.cex = 2.5, print.mode = c("raw","percent"), fill = c("orange", "red"), inverted = TRUE,
-             imagetype = "tiff", filename = "output/Figure5B.tiff", cat.pos = c(0,0))
+venn.diagram(shnw, cex = 1.8, cat.cex = 2.5, print.mode = c("raw","percent"), fill = c("#f768a1", "#ae017e"), inverted = TRUE,
+             imagetype = "tiff", filename = "output/Figure6B.tiff", cat.pos = c(0,0))
 
 
 #Alternative venn plot using ggVennDiagram https://github.com/gaospecial/ggVennDiagram

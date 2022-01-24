@@ -225,6 +225,7 @@ dev.off()
 
 ## Figure 2
 
+
 #Unweighted UniFrac
 ord.unw.uni <- ordinate(psUF.prevF.rar, "PCoA", "unifrac", weighted=F)
 
@@ -253,6 +254,7 @@ Fig2a <- unwt.unifrac.1.2 +
   geom_path(size = 1) +
   geom_text_repel(aes(label=samplepoint), color="black", fontface="bold", size=5) +
   scale_colour_manual(values=colours) +
+  guides(color = guide_legend(reverse=TRUE)) +
   theme(axis.text.x = element_text(face="bold", size=14),
         axis.text.y = element_text(face="bold", size=14),
         axis.title.x = element_text(size=14, face="bold"),
@@ -274,6 +276,7 @@ Fig2b <- w.unifrac.1.2 +
   geom_text(aes(label="First proximal\n colon samples", x=-0, y=-0.163),
             size = 5, color = "black") +
   scale_colour_manual(values=colours) +
+  guides(color = guide_legend(reverse=TRUE)) +
   theme(axis.text.x = element_text(face="bold", size=14),
         axis.text.y = element_text(face="bold", size=14),
         axis.title.x = element_text(size=14, face="bold"),
@@ -674,6 +677,55 @@ grid.draw(gtshnw.tax.family)
 dev.off()
 
 
+#Now for SI figure 4, heatmap of all families
+## Collapse taxonomy to family level
+## Print relative abundance values of the different families
+
+psUF.family <- tax_glom(psUF, taxrank = "Family", NArm = FALSE)
+
+psUF.family.merged <- merge_samples(psUF.family, "sampleshort2")
+
+#Fix sample data
+sam_data_fixed <- psUF.family@sam_data[- grep("B", psUF.family@sam_data$replicate),]
+rownames(sam_data_fixed) <- gsub("-A", "", rownames(sam_data_fixed))
+sam_data_fixed
+psUF.family.merged@sam_data = sam_data_fixed
+
+#Get best hit:
+psUF.family.merged.besthit <- microbiomeutilities::format_to_besthit(
+  psUF.family.merged, prefix = NULL)
+
+#Create new column with Phylum+Family for ambiguous IDs:
+new_tax_table_fam <- as.data.frame(tax_table(psUF.family.merged.besthit)) %>%
+  unite("Phylum_Family", c("Phylum", "Family"), sep = " -- ", remove = FALSE)
+
+new_tax_table_fam_matrix <- as.matrix(new_tax_table_fam)
+
+psUF.family.merged.besthit@tax_table <- tax_table(new_tax_table_fam_matrix)
+
+#Set sample order
+sampleorder <- c("BNW-ST", "BNW-SI", "BNW-PC1", "BNW-PC2", "BNW-PC3", "BNW-PC4", "BNW-DC",
+                 "SHNW-ST", "SHNW-PSI", "SHNW-DSI", "SHNW-PC1", "SHNW-PC2", "SHNW-PC3", "SHNW-DC1", "SHNW-DC3")
+
+plot_heatmap(psUF.family.merged.besthit, taxa.label = "Phylum_Family", method = "RDA",
+             sample.label = "sampleshort", low = "white", high = "red", na.value = "black",
+             trans = log_trans(10), sample.order = sampleorder) +
+  theme(axis.text.y = element_text(size=10, face = 'italic'),
+        axis.title.y = element_blank(),
+        axis.ticks = element_blank(),
+        strip.background = element_rect(colour = "black", fill = "white"),
+        strip.text = element_text(face = "bold", size = 12),
+        axis.title.x = element_blank(),
+        axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size = 14, face = "bold"),
+        panel.background = element_rect(fill = "White"),
+        panel.grid.major = element_line(colour = "white"),
+        panel.grid.minor = element_line(colour = "white")) +
+  facet_grid(.~species, scale = "free_x", space = "free_x")
+
+ggsave(filename = "output/FigureSS4.png", width = 10, height = 20, dpi = 300)
+ggsave(filename = "output/FigureSS4.pdf", width = 10, height = 20, dpi = 300)
+
+
 ###############
 ###HEAT MAP####
 ###############
@@ -733,6 +785,14 @@ ps.colon.rar.genus.NAs.merged.ANCOM <- prune_taxa(ps.colon.rar.genus.NAs.merged,
 ps.colon.rar.genus.NAs.merged.ANCOM.besthit <- microbiomeutilities::format_to_besthit(
   ps.colon.rar.genus.NAs.merged.ANCOM, prefix = NULL)
 
+#Create new rank which is phylum + best hit (for non-informative best hits -- e.g. 'uncultured')
+new_tax_table <- data.frame(tax_table(ps.colon.rar.genus.NAs.merged.ANCOM.besthit)) %>%
+  unite("Phylum_BestHit", c("Phylum", "Genus"), sep = " -- ", remove = FALSE)
+
+new_tax_table_matrix <- as.matrix(new_tax_table)
+
+ps.colon.rar.genus.NAs.merged.ANCOM.besthit@tax_table <- tax_table(new_tax_table_matrix)
+
 #Add phylogenetic tree
 ps.colon.rar.genus.NAs.merged.ANCOM.besthit@phy_tree = ps.colon.rar.genus.NAs.merged.ANCOM@phy_tree
 
@@ -740,7 +800,7 @@ ps.colon.rar.genus.NAs.merged.ANCOM.besthit@phy_tree = ps.colon.rar.genus.NAs.me
 sampleorder <- c("BNW-PC1", "BNW-PC2", "BNW-PC3", "BNW-PC4", "BNW-DC",
                  "SHNW-PC1", "SHNW-PC2", "SHNW-PC3", "SHNW-DC1", "SHNW-DC3")
 
-plot_heatmap(ps.colon.rar.genus.NAs.merged.ANCOM.besthit, taxa.label = "Genus", method = "RDA",
+plot_heatmap(ps.colon.rar.genus.NAs.merged.ANCOM.besthit, taxa.label = "Phylum_BestHit", method = "RDA",
              sample.label = "sampleshort", low = "white", high = "red", na.value = "black",
              trans = log_trans(10), sample.order = sampleorder) +
   theme(axis.text.y = element_text(size=10, face = 'italic'),
@@ -759,11 +819,12 @@ ggsave(filename = "output/Figure4.png", width = 10, height = 10, dpi = 300)
 ggsave(filename = "output/Figure4.svg", width = 10, height = 10, dpi = 300)
 ggsave(filename = "output/Figure4.pdf", width = 10, height = 10, dpi = 300)
 
+
 #####################
 ########Venn#########
 #####################
 
-## Figure 6 and SI figure 3
+## Figure 6 and SI figure 3 & 5
 ## Here, we're asking the question: "How many ASVs are shared between PC1 and the last
 ## distal colon sample for each wombat?"
 
@@ -807,9 +868,9 @@ venn.dc1.shnw.0 <- rownames(ps.DC.SHNW.table[ apply(ps.DC.SHNW.table, MARGIN = 1
                                                     function(x) any(x > 2))])
 
 #Create lists for each species and both species
-bnw <- list(BNW.PC1 = venn.pc1.bnw.0, BNW.DC = venn.dc1.bnw.0)
+bnw <- list(PC1 = venn.pc1.bnw.0, DC = venn.dc1.bnw.0)
 
-shnw <- list(SHNW.PC1 = venn.pc1.shnw.0, SHNW.DC = venn.dc1.shnw.0)
+shnw <- list(PC1 = venn.pc1.shnw.0, DC = venn.dc1.shnw.0)
 
 bothspecies <- list(BNW.DC = venn.dc1.bnw.0, BNW.PC1 = venn.pc1.bnw.0,
                     SHNW.PC1 = venn.pc1.shnw.0, SHNW.DC = venn.dc1.shnw.0)
@@ -820,6 +881,66 @@ venn.diagram(bnw, cex = 1.8, cat.cex = 2.5, print.mode = c("raw","percent"), fil
 
 venn.diagram(shnw, cex = 1.8, cat.cex = 2.5, print.mode = c("raw","percent"), fill = c("#f768a1", "#ae017e"), inverted = TRUE,
              imagetype = "tiff", filename = "output/Figure6B.tiff", cat.pos = c(0,0))
+
+
+##Same again, but at genus level
+ps.colon.rar.genus <- tax_glom(ps.colon.rar, taxrank = "Genus", NArm = FALSE)
+
+
+#Pull out the first proximal colon and last distal colon sample for each species
+ps.colon.rar.BNW <- subset_samples(ps.colon.rar.genus, species == "Bare-nosed")
+ps.colon.rar.SHNW <- subset_samples(ps.colon.rar.genus, species == "Hairy-nosed")
+
+ps.PC.BNW <- subset_samples(ps.colon.rar.BNW, sampleshort == "PC1")
+ps.PC.BNW.table <- otu_table(ps.PC.BNW)
+
+ps.DC.BNW <- subset_samples(ps.colon.rar.BNW, sampleshort == "DC")
+ps.DC.BNW.table <- otu_table(ps.DC.BNW)
+
+ps.PC.SHNW <- subset_samples(ps.colon.rar.SHNW, sampleshort == "PC1")
+ps.PC.SHNW.table <- otu_table(ps.PC.SHNW)
+
+ps.DC.SHNW <- subset_samples(ps.colon.rar.SHNW, sampleshort == "DC3")
+ps.DC.SHNW.table <- otu_table(ps.DC.SHNW)
+
+#Merge tables
+ps.colon.all <- merge_phyloseq(ps.PC.BNW, ps.DC.BNW, ps.PC.SHNW, ps.DC.SHNW)
+
+#Remove ASVs with counts of 0.
+ps.colon.all <- prune_taxa(taxa_sums(ps.colon.all) > 0, ps.colon.all)
+
+##I've set a detection threshold of >2 read counts per sample for this.
+## I.e., an ASV needs at least 3 reads assigned to a sample type to be considered present.
+## My rationale for this is to remove noise -- if it's only detected with 1 read, is it really there?
+
+#For each ASV (row), if abundance > 2, print ASV (rowname) to a vector
+venn.pc1.bnw.0 <- rownames(ps.PC.BNW.table[ apply(ps.PC.BNW.table, MARGIN = 1,
+                                                  function(x) any(x > 2))])
+
+venn.dc1.bnw.0 <- rownames(ps.DC.BNW.table[ apply(ps.DC.BNW.table, MARGIN = 1,
+                                                  function(x) any(x > 2))])
+
+venn.pc1.shnw.0 <- rownames(ps.PC.SHNW.table[ apply(ps.PC.SHNW.table, MARGIN = 1,
+                                                    function(x) any(x > 2))])
+
+venn.dc1.shnw.0 <- rownames(ps.DC.SHNW.table[ apply(ps.DC.SHNW.table, MARGIN = 1,
+                                                    function(x) any(x > 2))])
+
+#Create lists for each species and both species
+bnw <- list(PC1 = venn.pc1.bnw.0, DC = venn.dc1.bnw.0)
+
+shnw <- list(PC1 = venn.pc1.shnw.0, DC = venn.dc1.shnw.0)
+
+bothspecies <- list(BNW.DC = venn.dc1.bnw.0, BNW.PC1 = venn.pc1.bnw.0,
+                    SHNW.PC1 = venn.pc1.shnw.0, SHNW.DC = venn.dc1.shnw.0)
+
+#Plot em using venn.diagram (figure 5)
+venn.diagram(bnw, cex = 1.4, cat.cex = 1.7, print.mode = c("raw","percent"), fill = c("#f768a1", "#ae017e"), inverted = FALSE,
+             imagetype = "png", filename = "output/FigureSS5A_GENUS.png", cat.pos = c(320, 30))
+
+venn.diagram(shnw, cex = 1.4, cat.cex = 1.7, print.mode = c("raw","percent"), fill = c("#f768a1", "#ae017e"), inverted = TRUE,
+             imagetype = "png", filename = "output/FigureSS5B_GENUS.png", cat.pos = c(30,320))
+
 
 
 #Alternative venn plot using ggVennDiagram https://github.com/gaospecial/ggVennDiagram
@@ -835,6 +956,7 @@ ggVennDiagram(bothspecies, label_alpha = 0.5, label = "count") +
   labs(fill = "ASVs")
 
 ggsave(filename = "output/SI_Figure_3.png", width = 10, height = 10, dpi = 300)
+
 
 ##Now, let's pull out stats about the venn diagrams (i.e. what % of ASVs and rel ab.)
 #Pull out ASVs belonging to specific regions of the cross-species Venn diagram

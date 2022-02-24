@@ -1,8 +1,8 @@
 # 2021_Wombat_GI_tract_16S
 
-### Repository for the 2021 paper: Microbial biogeography of the wombat gastrointestinal tract 
+### Repository for the 2022 paper: Microbial biogeography of the wombat gastrointestinal tract 
 
-Pre-print link: https://www.researchsquare.com/article/rs-500341/v2
+Open-access paper link: https://peerj.com/articles/12982/
 
 - QIIME2 code + analysis details are available in the Jupyter notebook: **code/2020_BNW_SHNW_GIT_16S.ipynb**
 - QIIME2 outputs are available in the **data/QIIME2_Outputs** folder
